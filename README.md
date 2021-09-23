@@ -1,8 +1,32 @@
 # PRIVATE TO PUBLIC BESU TESTER
 
-Proyect to test the Besu bug founded in 27.1.4-dev when a private contract calls to a public contract that also calls to another public contract.
+Project to test the Besu bug founded in 27.1.4 when a private contract calls to a public contract that also calls to another public contract.
 
-To reproduce it:
+## Besu test network
+
+In order to simplify testing, a besu network is integrated with 3 nodes: 1 validator and two nodes with privacy and tessera.
+
+In order to use this facility, it is necessary to have docker and docker-compose installed on the machine.
+
+### Starting besu
+
+To start the network and configure the privacy group:
+
+```sh
+$ npm run start-besu
+```
+
+### Stopping besu
+
+Para parar la red y borrar los volúmenes docker:
+
+```sh
+$ npm run stop-besu
+```
+
+## Reproducing the issue
+
+With the Besu network started, run `npm test` from the console to reproduce the described problem, and the result will look like this:
 
 ```sh
 $ npm test
@@ -53,9 +77,3 @@ Result of the test:
 ```
 
 When a contract deployed in the private space calls another contract deployed in the public space that also calls another public contract, it fails with a result of 0x.
-
-# TO BE DONE
-
-* Remove eea.js library usage.
-* Include proxy pattern usage.
-* Create a replica of development Besu network to test it from local.

@@ -7,7 +7,9 @@
     "test": "test"
   },
   "scripts": {
-    "test": "npx truffle exec scripts/private_public_test.js --network adminAro"
+    "start-besu": "cd hyperledger-besu-tessera-network && ./run.sh && cd ..",
+    "test": "npx truffle exec scripts/private_public_test.js --network besuLocal",
+    "stop-besu": "cd hyperledger-besu-tessera-network && ./stop.sh && cd .."
   },
   "repository": {
     "type": "git",

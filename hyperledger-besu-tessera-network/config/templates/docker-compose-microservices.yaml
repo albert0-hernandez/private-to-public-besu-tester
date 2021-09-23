@@ -1,0 +1,26 @@
+version: "2.1"
+services:
+  tessera:
+    user: root
+    image: quorumengineering/tessera:21.7.2
+    environment:
+      - TESSERA_NODEURL=${TESSERA_NODEURL}
+    command: ["--configfile /config/tessera/config.json"]
+
+  besu:
+    user: root
+    image: hyperledger/besu:21.7.4
+    environment:
+      - BESU_OPTS=-Xms2G -Xmx4G -XX:NewRatio=1 -Dcom.sun.management.jmxremote -Dcom.sun.management.jmxremote.port=8888 -Dcom.sun.management.jmxremote.authenticate=false -Dcom.sun.management.jmxremote.ssl=false
+    volumes:
+      - ./besu:/config/besu
+      - ../network:/network
+      - ../network/static-nodes.json:/data/node/static-nodes.json
+    command: ["--config-file=/config/besu/config.toml"]
+
+  besu-regular:
+    extends:
+      service: besu
+    environment:
+      - BESU_PRIVACY_ENABLED=true
+      - BESU_PRIVACY_FLEXIBLE_GROUPS_ENABLED=true

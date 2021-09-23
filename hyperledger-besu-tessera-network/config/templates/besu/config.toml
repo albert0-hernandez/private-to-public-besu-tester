@@ -1,0 +1,19 @@
+# Valid TOML config file
+data-path="/data/node"
+logging="DEBUG"
+
+#Network
+p2p-port="21000"
+p2p-interface="0.0.0.0"
+p2p-host="0.0.0.0"
+discovery-enabled=false
+
+# Chain
+genesis-file="/network/genesis.json"
+min-gas-price=0
+
+rpc-http-api=["ETH","NET","IBFT","WEB3","ADMIN","PRIV","EEA"]
+rpc-http-enabled=true
+rpc-http-host="0.0.0.0"
+rpc-http-port="22000"
+host-whitelist=["*"]
