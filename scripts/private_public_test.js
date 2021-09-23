@@ -3,15 +3,15 @@ const PrivateContract = artifacts.require("PrivateContract");
 const GenericContract = artifacts.require("GenericContract");
 const StoreDataContract = artifacts.require("StoreDataContract");
 
-const privateFrom = "u5JO8TdUJiiBKh82KSniqLvVTNcrAJ+znGXtLYrRtAo="
-const privateKey = "2c5e3dbf5b875a968b7a0f16156ee3b875ea0f3164c6878f6c8c20ea6b42927a"
-const privacyGroupId = "VW1WdWRHRTBSR2x6ZEhKcFluVjBiM0l0VW1WdWRHRTA="
-const host = "http://127.0.0.1:11018";
-const chainId = 11111111;
+const privateFrom = "AMx3eyWwGYwn2/hK3YCLYcJJUOYPiepNW/mPpUQvD08=";//"Pvoq/2SSAeECW5NWk8HDNw+goyunM4fO6c98Hcb8sWE="
+const privateKey = "9e5c50f9c8d81cadcdd53da98ecb466bdeb0e148b7e062b0d673938b3bcddbe8"
+const privacyGroupId = "UVZoQkxVbE9SekF3TURBd01EQXdNREF3TURBd01EQXc="
+const host = "http://127.0.0.1:22001";
+const chainId = 2021;
 
 async function main() {
 
-    const e_ = await eea({host: host, networkId: chainId, privateFrom: privateFrom, privateKey: privateKey, libraries: {}, gasPrice: 40000, gasLimit: 20000000});
+    const e_ = await eea({host: host, networkId: chainId, privateFrom: privateFrom, privateKey: privateKey, libraries: {}, gasPrice: 0, gasLimit: 20000000});
 
     const toReturn = {};
 
@@ -92,7 +92,7 @@ async function main() {
 }
 
 /*
-npx truffle exec scripts/private_public_test.js --network adminAro
+npx truffle exec scripts/private_public_test.js --network besuLocal
 */
 
 module.exports = function(callback) {

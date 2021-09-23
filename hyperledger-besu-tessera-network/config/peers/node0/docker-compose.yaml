@@ -1,0 +1,46 @@
+version: "2.1"
+services:
+    node0-tessera:
+        extends:
+            file: "./templates/docker-compose-microservices.yaml"
+            service: "tessera"
+        container_name: node0-tessera
+        environment:
+            - TESERA_NODEURL=http://172.16.100.23:9000
+        volumes:
+            - ./peers/node0/tessera/config:/config/tessera
+            - node0-tessera:/data
+            - ./peers/node0/tessera/keys:/keys
+        networks:
+            afb:
+                ipv4_address: 172.16.100.23
+
+    node0-node:
+        extends:
+            file: "./templates/docker-compose-microservices.yaml"
+            service: "besu-regular"
+        container_name: node0-node
+        environment:
+            - BESU_P2P_HOST=172.16.100.11
+            #Privacy
+            - PANTHEON_PRIVACY_MARKER_TRANSACTION_SIGNING_KEY_FILE=/privacy-marker-account
+            - BESU_PRIVACY_URL=http://172.16.100.23:10000
+            - BESU_PRIVACY_PUBLIC_KEY_FILE=/tessera/keys/tessera.pub
+        ports:
+            - "21001:21000/tcp" #discovery
+            - "21001:21000/udp" #discovery
+            - "22001:22000"     #rpc
+            #Profiling
+            - "8888:8888"
+        volumes:
+        - node0-node:/data/node/database
+        - ./peers/node0/priv:/data/node/key
+        #Privacy
+        - ./peers/node0/privacy-marker-account:/privacy-marker-account
+        - ./peers/node0/tessera:/tessera
+        networks:
+            afb:
+                ipv4_address: 172.16.100.11
+volumes:
+    node0-node:
+    node0-tessera:

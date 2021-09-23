@@ -1,0 +1,21 @@
+version: "2.1"
+services:
+    validator:
+        extends:
+            file: "./templates/docker-compose-microservices.yaml"
+            service: "besu"
+        container_name: validator
+        environment:
+            - BESU_P2P_HOST=172.16.100.10
+        ports:
+            - "21000:21000/tcp" #discovery
+            - "21000:21000/udp" #discovery
+            - "22000:22000"     #rpc
+        volumes:
+        - ./peers/validator/priv:/data/node/key
+        - validator-node:/data/node/database
+        networks:
+            afb:
+                ipv4_address: 172.16.100.10
+volumes:
+    validator-node:

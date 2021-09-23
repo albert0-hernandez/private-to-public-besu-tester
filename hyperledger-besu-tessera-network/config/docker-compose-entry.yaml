@@ -1,0 +1,10 @@
+version: "2.1"
+#Just used to set make paths in docker compose files more easy
+
+networks:
+    afb:
+      driver: bridge
+      ipam:
+        config:
+          - subnet: 172.16.100.0/24
+            gateway: 172.16.100.1

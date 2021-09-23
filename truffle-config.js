@@ -3,17 +3,17 @@ const HDWalletProvider = require("truffle-hdwallet-provider");
 
 const PRIVATE_KEY = "9e5c50f9c8d81cadcdd53da98ecb466bdeb0e148b7e062b0d673938b3bcddbe8";
 
-const ADMIN_ARO_LOCAL_URL = "http://127.0.0.1:11018"
+const BESU_LOCAL_URL = "http://127.0.0.1:22001"
 
-const ADMIN_ARO_LOCAL_PROVIDER = new HDWalletProvider(PRIVATE_KEY, ADMIN_ARO_LOCAL_URL);
+const BESU_LOCAL_PROVIDER = new HDWalletProvider(PRIVATE_KEY, BESU_LOCAL_URL);
 
 module.exports = {
   networks: {
-    adminAro: {
-      provider: ADMIN_ARO_LOCAL_PROVIDER,
+    besuLocal: {
+      provider: BESU_LOCAL_PROVIDER,
       network_id: "*",
       gas: 20000000,
-      gasPrice: 4000000,
+      gasPrice: 0,
     },
     development: {
       host: "localhost",
