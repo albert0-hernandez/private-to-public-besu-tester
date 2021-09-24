@@ -16,6 +16,20 @@ To start the network and configure the privacy group:
 $ npm run start-besu
 ```
 
+#### Throubleshooting
+
+If during first start-besu, during the creation of the privacy group it fails with:
+
+```
+(node:46296) UnhandledPromiseRejectionWarning: Error: Returned error: Onchain Privacy group does not exist.
+```
+
+Run in the console:
+```sh
+$ npm run stop-besu
+$ npm run start-besu
+```
+
 ### Stopping besu
 
 Para parar la red y borrar los volúmenes docker:

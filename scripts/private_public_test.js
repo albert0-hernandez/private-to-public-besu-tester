@@ -4,7 +4,7 @@ const GenericContract = artifacts.require("GenericContract");
 const StoreDataContract = artifacts.require("StoreDataContract");
 
 const privateFrom = "AMx3eyWwGYwn2/hK3YCLYcJJUOYPiepNW/mPpUQvD08=";//"Pvoq/2SSAeECW5NWk8HDNw+goyunM4fO6c98Hcb8sWE="
-const privateKey = "9e5c50f9c8d81cadcdd53da98ecb466bdeb0e148b7e062b0d673938b3bcddbe8"
+const privateKey = "b97f959696fd9b2e829cc8dc83d33f0ec691657898eaa135af642a59f2d9a1f4"
 const privacyGroupId = "UVZoQkxVbE9SekF3TURBd01EQXdNREF3TURBd01EQXc="
 const host = "http://127.0.0.1:22001";
 const chainId = 2021;
@@ -15,16 +15,16 @@ async function main() {
 
     const toReturn = {};
 
-    // On public space:
-    //   * Deploying StoreDataContract
-    //   * Deploying GenericContract on public space using StoreDataContract
-    // On private space:
-    //   * Deploying PrivateContract using GenericContract's of public space
-    //   * Call to getPublicContractData
-    //   * Call to getPublicStoreContractData. It fails
+    // 1. On public space:
+    //   1.a. Deploying StoreDataContract
+    //   1.b. Deploying GenericContract on public space using StoreDataContract
+    // 2. On private space:
+    //   2.a. Deploying PrivateContract using GenericContract's of public space
+    //   2.b. Call to getPublicContractData
+    //   2.c. Call to getPublicStoreContractData. It fails
 
-    console.log("On public space:");
-    console.log("  * Deploying StoreDataContract");
+    console.log("1. On public space:");
+    console.log("  1.a. Deploying StoreDataContract");
     const storeDataContract = await StoreDataContract.new(456);
     toReturn.public = {};
     toReturn.public.storeDataContract = {
@@ -33,7 +33,7 @@ async function main() {
         blockHash: storeDataContract.blockHash,
         blockNumber: storeDataContract.blockNumber
     }
-    console.log("  * Deploying GenericContract on public space using StoreDataContract");
+    console.log("  1.b. Deploying GenericContract on public space using StoreDataContract");
     const genericContract = await GenericContract.new(123, storeDataContract.address);
     toReturn.public.genericContract = {
         address: genericContract.address,
@@ -42,9 +42,8 @@ async function main() {
         blockNumber: genericContract.blockNumber
     };
 
-    console.log("\n On private space:");
-
-    console.log("  * Deploying PrivateContract using GenericContract's of public space");
+    console.log("\n2. On private space:");
+    console.log("  2.a. Deploying PrivateContract using GenericContract's of public space");
     const privateContract = await e_.privDeploy(
         PrivateContract.abi,
         privacyGroupId,
@@ -61,7 +60,7 @@ async function main() {
     toReturn.tests = {};
 
     //   * Call to getPublicContractData
-    console.log("  * Call to getPublicContractData");
+    console.log("  2.b. Call to getPublicContractData");
     try {
         toReturn.tests["Call to getPublicContractData"] = await e_.privCall(
             PrivateContract.abi,
@@ -74,7 +73,7 @@ async function main() {
     }
 
     //   * Call to getPublicStoreContractData. It fails
-    console.log("  * Call to getPublicStoreContractData. It fails");
+    console.log("  2.c. Call to getPublicStoreContractData. It fails");
     try {
         toReturn.tests["Call to getPublicStoreContractData"] = await e_.privCall(
             PrivateContract.abi,

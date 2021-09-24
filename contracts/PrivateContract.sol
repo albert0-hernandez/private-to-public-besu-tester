@@ -19,10 +19,12 @@ contract PrivateContract {
         publicContract = _publicContract;
     }
 
+    // Here we call directly the data that we need to recover: 1 indirection
     function getPublicContractData() external view returns(uint256) {
         return publicContract.getData();
     }
 
+    // Here we call a contract that have another indirection: 2 indirections
     function getPublicStoreContractData() external view returns(uint256) {
         return publicContract.getStoreDataContractData();
     }

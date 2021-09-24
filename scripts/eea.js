@@ -1,51 +1,13 @@
 const EEAClient = require("web3-eea");
 const Web3 = require("web3");
-const Tx = require('ethereumjs-tx');
 const { privateToAddress } = require("ethereumjs-util");
 
 let config;
 let web3;
 
-function linkLibraries(byteCode) {
-    let byteCodeReplaced = byteCode;
-    for (const keyIndex in Object.keys(config.libraries)) {
-        const key = Object.keys(config.libraries)[keyIndex];
-        const value = config.libraries[key];
-        const regEx = new RegExp(`_+${key}_+`, "g");
-
-        byteCodeReplaced = byteCodeReplaced.replace(
-            regEx,
-            value.replace("0x", "").toLowerCase()
-        );
-
-    }
-    return byteCodeReplaced;
-}
-
-async function sendRawTransaction(options) {
-    config.nonce = await web3.eth.getTransactionCount(config.from);
-    const txParams = {
-        nonce: config.nonce,
-        gasPrice: config.gasPrice,
-        gasLimit: config.gasLimit,
-        value: 0,
-        data: options.data
-    };
-    if (options.to) {
-        txParams.to = options.to;
-    }
-    if (options.chainId) {
-        txParams.chainId = options.chainId;
-    }
-    const tx = new Tx.Transaction(txParams);
-    tx.sign(config.privateKeyBuffer);
-    const serializedTx = tx.serialize();
-    return await web3.eth.sendSignedTransaction(serializedTx);
-}
-
 async function eea(eeaConfig) {
-    if (!(eeaConfig.host && eeaConfig.networkId && eeaConfig.privateFrom && eeaConfig.privateKey && eeaConfig.libraries && eeaConfig.gasPrice, eeaConfig.gasLimit)) {
-        throw new Error("config must include web3, networkId, privateFrom, privateKey, libraries, gasPrice and gasLimit");
+    if (!(eeaConfig.host && eeaConfig.networkId && eeaConfig.privateFrom && eeaConfig.privateKey && eeaConfig.gasPrice, eeaConfig.gasLimit)) {
+        throw new Error("config must include web3, networkId, privateFrom, privateKey, gasPrice and gasLimit");
     }
     config = eeaConfig;
     web3 = new EEAClient(
@@ -60,24 +22,16 @@ async function eea(eeaConfig) {
     );
     config.privateKeyBuffer = Buffer.from(config.privateKey, "hex");
     config.from = `0x${privateToAddress(config.privateKeyBuffer).toString("hex")}`;
-    if (!config.isGanache) {
-        config.isGanache = false;
-    }
+
     return {
         config: eeaConfig,
         web3: web3,
-        linkLibraries: linkLibraries,
         privDeploy: async (abi, privacyGroupId, bytecode, arguments = null) => {
-            const linkedByteCode = linkLibraries(bytecode);
             const contract = new web3.eth.Contract(abi);
 
             const transaction = {
-                data: contract.deploy({data: linkedByteCode, arguments: arguments}).encodeABI()
+                data: contract.deploy({data: bytecode, arguments: arguments}).encodeABI()
             };
-
-            if (config.isGanache) {
-                return await sendRawTransaction(transaction);
-            }
 
             transaction.privateFrom = config.privateFrom;
             transaction.privacyGroupId = privacyGroupId;
@@ -109,11 +63,7 @@ async function eea(eeaConfig) {
                 privateKey: config.privateKey,
                 restriction: 'unrestricted'
             };
-            let privateTxHash;
-            if (config.isGanache) {
-                return await sendRawTransaction(functionCall);
-            }
-            privateTxHash = await web3.eea.sendRawTransaction(functionCall);
+            let privateTxHash = await web3.eea.sendRawTransaction(functionCall);
             // console.log("Transaction Hash:", privateTxHash);
             return await web3.priv.getTransactionReceipt(privateTxHash, config.privateFrom);
         },
@@ -140,12 +90,7 @@ async function eea(eeaConfig) {
                 privacyGroupId: privacyGroupId,
                 blockNumber: blockNumber
             };
-            let result;
-            if (config.isGanache) {
-                result = await web3.eth.call(functionCall);
-            } else {
-                result = await web3.priv.call(functionCall);
-            }
+            let result = await web3.priv.call(functionCall);
             return web3.eth.abi.decodeParameters(functionAbi.outputs, result);
         }
     };
